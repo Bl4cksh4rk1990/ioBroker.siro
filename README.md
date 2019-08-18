@@ -16,7 +16,7 @@ Add your COnnector App username & password in Configuration Window.
 ## Additional information
 You can control One-Way and Two-Way blinds with Point and No-Point Operation.
 
-# States: 
+### States: 
 
 Two Way Point Blinds: 
 - Battery Status
