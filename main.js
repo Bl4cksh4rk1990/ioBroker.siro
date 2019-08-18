@@ -59,15 +59,19 @@ if (!id || !state || state.ack) {
 	adapter.getObject(channelId, (err, obj) => {
 		adapter.log.info('Read wirelessMode: ' + obj.native.wirelessMode);
 
-		if (obj.native.wirelessMode === 0) { //One Way no Point
-			var TempOperation;
+			var TempOperation = null;
+			var TempTargetPosition = null;
 			if (IDState === "UP") {
 				TempOperation = '1';
 			} else if (IDState === "DOWN") {
 				TempOperation = '0';
 			} else if (IDState === "STOP") {
 				TempOperation = '2';
+			} else if (IDState === "targetPosition") {
+				TempTargetPosition = state.val;
 			}
+			
+			if (TempOperation !== null) {
 			formData = {
 				accessToken: AccessToken,
 				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
@@ -75,31 +79,15 @@ if (!id || !state || state.ack) {
 				deviceType: obj.native.deviceType,
 				operation: TempOperation
 			};
-		} else if (obj.native.wirelessMode === 1) { //Two Way Point
-			formData = {
+			} else if (TempTargetPosition !== null) {
+				formData = {
 				accessToken: AccessToken,
 				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
 				mac: obj.native.mac,
 				deviceType: obj.native.deviceType,
-				targetPosition: state.val
+				targetPosition: TempTargetPosition
 			};
-		} else if (obj.native.wirelessMode === 2) { //Two Way no Point
-			formData = {
-				accessToken: AccessToken,
-				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
-				mac: obj.native.mac,
-				deviceType: obj.native.deviceType,
-				targetPosition: state.val
-			};
-		} else if (obj.native.wirelessMode === 3) { //OneWay Point
-			formData = {
-				accessToken: AccessToken,
-				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
-				mac: obj.native.mac,
-				deviceType: obj.native.deviceType,
-				targetPosition: state.val
-			};
-		}
+			}
 
 		request.post({
 			url: 'https://connectoreu.shadeconnector.com:8443/userCenter/deviceService/deviceControl',
@@ -256,7 +244,6 @@ function ReadDevicesFromServer() {
 					});
 					setStates(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.operation', deviceData.operation);
 
-					if (deviceData.wirelessMode === 0) {
 						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.UP', {
 							type: 'state',
 							common: {
@@ -289,7 +276,7 @@ function ReadDevicesFromServer() {
 							},
 							native: {}
 						});
-					} else if (deviceData.wirelessMode === 1) { //1 = Bi-Direktional Punktanfahrung
+					if (deviceData.wirelessMode === 1) { //1 = Bi-Direktional Punktanfahrung
 						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.batteryLevel', {
 							type: 'state',
 							common: {

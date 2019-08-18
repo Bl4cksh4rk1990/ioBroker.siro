@@ -31,6 +31,9 @@ One Way No-Point Blinds:
 
 
 ## Changelog
+### 1.0.7 (2019-08-18)
+* new Buttons added
+
 ### 1.0.6 (2019-08-18)
 * fix start problem
 
