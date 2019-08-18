@@ -31,6 +31,9 @@ One Way No-Point Blinds:
 
 
 ## Changelog
+### 1.0.6 (2019-08-18)
+* fix start problem
+
 ### 1.0.5 (2019-08-18)
 * fix state refresh problem
 

@@ -6,8 +6,13 @@
       "en": "Bridge Connector to control Siro Blinds",
       "de": "Bridge Connector zum steuern der Siro Rollomotoren"
     },
-    "version": "1.0.5",
+    "version": "1.0.6",
     "news": {
+	"1.0.6": {
+        "en": "fix start problem",
+        "de": "Problem beim Starten behoben"
+      },
+
 	"1.0.5": {
         "en": "fix State refresh Problem",
         "de": "Problem beim aktualisieren der States behoben"

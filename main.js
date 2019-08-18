@@ -123,13 +123,6 @@ if (!id || !state || state.ack) {
 	});
     });
 
-    adapter.on('unload', function () {
-        if (ReadInterval) {
-            clearInterval(ReadInterval);
-            ReadInterval = 0;
-        }
-        isStopping = true;
-    });
     return adapter;
 }
 
