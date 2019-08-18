@@ -7,10 +7,12 @@
  */
 'use strict';
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const adapter = utils.Adapter('connector');
+//const adapter = utils.Adapter('connector');
 const request = require('request');
 const md5 = require('md5');
 const uuid = require('./lib/uuid');
+let adapter;
+const adapterName = require('./package.json').name.split('.').pop();
 
 let objects = {};
 let delayed = {};
@@ -23,11 +25,28 @@ let tasks = [];
 let AccessToken;
 let ReturnCode;
 
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {name: adapterName});
 
-adapter.on('ready', main);
+    adapter = new utils.Adapter(options);
 
-adapter.on('stateChange', (id, state) => {
-	if (!id || !state || state.ack) {
+    adapter.on('ready', function () {
+        main();
+    });
+	
+	adapter.on('objectChange', function (id, obj) {
+        	if (obj) {
+            // The object was changed
+            adapter.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
+        } else {
+            // The object was deleted
+            adapter.log.info(`object ${id} deleted`);
+        }
+    });
+	
+		adapter.on('stateChange', function (id, state) {
+if (!id || !state || state.ack) {
 		return;
 	}
 	const pos = id.lastIndexOf('.');
@@ -102,10 +121,20 @@ adapter.on('stateChange', (id, state) => {
 			}
 		});
 	});
-});
+    });
+
+    adapter.on('unload', function () {
+        if (ReadInterval) {
+            clearInterval(ReadInterval);
+            ReadInterval = 0;
+        }
+        isStopping = true;
+    });
+    return adapter;
+}
 
 var ReadInterval = setInterval(function () {
-	// alle 3 Sekunden ausführen 
+	// alle 10 Sekunden ausführen 
 	ReadDevicesFromServer();
 }, 10000);
 
@@ -143,6 +172,14 @@ function setConnected(conn) {
 	}
 }
 
+function setStates(id, val) {
+	adapter.setState(id, {
+						val: val,
+						ack: true
+					});
+	return '';
+}
+
 function ReadDevicesFromServer() {
 	request.post({
 		url: 'https://connectoreu.shadeconnector.com:8443/userCenter/areaService/getAreasWithDevices',
@@ -161,7 +198,7 @@ function ReadDevicesFromServer() {
 			adapter.log.info('Read Devices...');
 			for (var key in body.areas[0].childAreas[0].childAreas) {
 				var obj = body.areas[0].childAreas[0].childAreas[key];
-				adapter.setObjectNotExists(obj.areaName, {
+				adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_'), {
 					type: 'device',
 					common: {
 						name: obj.areaName,
@@ -174,7 +211,7 @@ function ReadDevicesFromServer() {
 					var device = obj.devices[key2];
 					var deviceData = JSON.parse(device.deviceData);
 
-					adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias, {
+					adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_'), {
 						type: 'channel',
 						common: {
 							name: device.deviceAlias,
@@ -187,26 +224,23 @@ function ReadDevicesFromServer() {
 						}
 					});
 
-					adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.RSSI', {
+					adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.RSSI', {
 						type: 'state',
 						common: {
 							name: 'RSSI',
-							role: 'value',
+							role: 'value.rssi',
 							write: false,
 							read: true
 						},
 						native: {}
 					});
-					adapter.setState(obj.areaName + '.' + device.deviceAlias + '.RSSI', {
-						val: deviceData.RSSI,
-						ack: true
-					});
+					setStates(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.RSSI', deviceData.RSSI);
 
-					adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.operation', {
+					adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.operation', {
 						type: 'state',
 						common: {
 							name: 'operation',
-							role: 'value',
+							role: 'state',
 							states: {"0": "Runter fahren",
 									 "1": "Hoch fahren",
 									 "2": "Stop",
@@ -227,13 +261,10 @@ function ReadDevicesFromServer() {
 						},
 						native: {}
 					});
-					adapter.setState(obj.areaName + '.' + device.deviceAlias + '.operation', {
-						val: deviceData.operation,
-						ack: true
-					});
+					setStates(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.operation', deviceData.operation);
 
 					if (deviceData.wirelessMode === 0) {
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.UP', {
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.UP', {
 							type: 'state',
 							common: {
 								name: 'UP',
@@ -244,7 +275,7 @@ function ReadDevicesFromServer() {
 							native: {}
 						});
 
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.DOWN', {
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.DOWN', {
 							type: 'state',
 							common: {
 								name: 'DOWN',
@@ -255,7 +286,7 @@ function ReadDevicesFromServer() {
 							native: {}
 						});
 
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.STOP', {
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.STOP', {
 							type: 'state',
 							common: {
 								name: 'STOP',
@@ -266,7 +297,7 @@ function ReadDevicesFromServer() {
 							native: {}
 						});
 					} else if (deviceData.wirelessMode === 1) { //1 = Bi-Direktional Punktanfahrung
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.batteryLevel', {
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.batteryLevel', {
 							type: 'state',
 							common: {
 								name: 'batteryLevel',
@@ -277,27 +308,21 @@ function ReadDevicesFromServer() {
 							},
 							native: {}
 						});
-						adapter.setState(obj.areaName + '.' + device.deviceAlias + '.batteryLevel', {
-							val: Math.round(deviceData.batteryLevel / 10),
-							ack: true
-						});
+						setStates(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.batteryLevel', Math.round(deviceData.batteryLevel / 10));
 
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.currentState', {
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.currentState', {
 							type: 'state',
 							common: {
 								name: 'currentState',
-								role: 'value',
+								role: 'state',
 								write: false,
 								read: true
 							},
 							native: {}
 						});
-						adapter.setState(obj.areaName + '.' + device.deviceAlias + '.currentState', {
-							val: deviceData.currentState,
-							ack: true
-						});
+						setStates(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.currentState', deviceData.currentState);
 						
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.currentPosition', {
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.currentPosition', {
 							type: 'state',
 							common: {
 								name: 'currentPosition',
@@ -308,12 +333,9 @@ function ReadDevicesFromServer() {
 							},
 							native: {}
 						});
-						adapter.setState(obj.areaName + '.' + device.deviceAlias + '.currentPosition', {
-							val: deviceData.currentPosition,
-							ack: true
-						});
-
-						adapter.setObjectNotExists(obj.areaName + '.' + device.deviceAlias + '.targetPosition', {
+						setStates(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.currentPosition', deviceData.currentPosition);
+						
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.targetPosition', {
 							type: 'state',
 							common: {
 								name: 'targetPosition',
@@ -327,6 +349,7 @@ function ReadDevicesFromServer() {
 					}
 				}
 			}
+
 		} else {
 			setConnected(false);
 
@@ -363,4 +386,11 @@ function main() {
 			adapter.log.info('Login failed. Return Code: ' + ReturnCode);
 		}
 	});
+}
+
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
