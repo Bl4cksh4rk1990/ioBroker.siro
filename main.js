@@ -191,7 +191,7 @@ function ReadDevicesFromServer() {
 						type: 'state',
 						common: {
 							name: 'RSSI',
-							role: 'state',
+							role: 'value',
 							write: false,
 							read: true
 						},
@@ -206,7 +206,7 @@ function ReadDevicesFromServer() {
 						type: 'state',
 						common: {
 							name: 'operation',
-							role: 'state',
+							role: 'value',
 							states: {"0": "Runter fahren",
 									 "1": "Hoch fahren",
 									 "2": "Stop",
@@ -286,7 +286,7 @@ function ReadDevicesFromServer() {
 							type: 'state',
 							common: {
 								name: 'currentState',
-								role: 'state',
+								role: 'value',
 								write: false,
 								read: true
 							},
