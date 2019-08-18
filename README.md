@@ -11,28 +11,29 @@ Control Siro Blinds with ioBroker
 
 ## Configuration
 
-### Username
-Add your Username from the Connector App
-
-### Password
-Add your Password from the Connector App
+Add your COnnector App username & password in Configuration Window.
 
 ## Additional information
 You can control One-Way and Two-Way blinds with Point and No-Point Operation.
 
-Two Way Blinds: 
+# States: 
+
+Two Way Point Blinds: 
 - Battery Status
+- RSSI
+- Current Position
+- Target Position
 
-Point Blinds: 
-- targetPosition
-
-No-Point Blinds:
+One Way No-Point Blinds:
 - UP
 - DOWN
 - STOP
 
 
 ## Changelog
+### 1.0.5 (2019-08-18)
+* fix state refresh problem
+
 ### 1.0.4 (2019-08-18)
 * first working version
 
