@@ -11,7 +11,7 @@ Control Siro Blinds with ioBroker
 
 ## Configuration
 
-Add your COnnector App username & password in Configuration Window.
+Add your Connector App username & password in Configuration Window.
 
 ## Additional information
 You can control One-Way and Two-Way blinds with Point and No-Point Operation.
