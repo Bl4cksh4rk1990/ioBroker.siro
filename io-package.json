@@ -1,0 +1,64 @@
+{
+  "common": {
+    "name": "connector",
+    "title": "Bridge Connector",
+    "desc": {
+      "en": "Bridge Connector to control Siro Blinds",
+      "de": "Bridge Connector zum steuern der Siro Rollomotoren"
+    },
+    "version": "1.0.4",
+    "news": {
+      "1.0.4": {
+        "en": "working version",
+        "de": "funktionierende Version"
+      }
+    },
+    "mode": "daemon",
+    "platform": "javascript/Node.js",
+    "loglevel": "info",
+    "keywords": [
+      "Connector",
+      "Siro"
+    ],
+    "messagebox": true,
+    "materialize": true,
+    "authors": [
+      "Bl4cksh4rk <bl4cksh4rk@live.de>"
+    ],
+    "license": "MIT",
+    "readme": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/blob/master/README.md",
+    "icon": "Connector.png",
+    "extIcon": "https://raw.githubusercontent.com/Bl4cksh4rk1990/ioBroker.connector/master/admin/Connector.png",
+    "type": "iot-systems",
+    "enabled": true
+  },
+  "native": {
+    "Interval": 20000,
+    "heartbeatTimeout": 30000,
+    "restartInterval": 30000
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If connected to Connector Service",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
+}

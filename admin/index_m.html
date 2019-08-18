@@ -1,0 +1,165 @@
+<html>
+<head>
+<!-- these 4 files always have to be included -->
+<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+<!-- these files always have to be included -->
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../lib/js/materialize.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="../../js/tableEditor.js"></script>
+<script type="text/javascript" src="words.js"></script>
+
+    <style>
+        .m th {
+            border-radius: 0 !important;
+        }
+    </style>
+
+<script type="text/javascript">
+    'use strict';
+    var keys = [];
+
+    function load(settings, onChange) {
+        if (!settings) return;
+
+        if (!settings.keys) {
+            settings.keys = [];
+        }
+        if (settings.heartbeatTimeout === undefined) {
+            settings.heartbeatTimeout = 20000;
+        }
+        if (settings.restartInterval === undefined) {
+            settings.restartInterval = 30000;
+        }
+
+        fillSelectIPs('#bind', settings.bind, false, true, function () {
+            $('#bind').select();
+        });
+
+        $('.value').each(function () {
+            var key = $(this).attr('id');
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).on('change', function() {
+                    onChange();
+                });
+            } else {
+                $value.val(settings[key]).on('change', function() {
+                    onChange();
+                }).keyup(function() {
+                    onChange();
+                });
+            }
+        });
+
+        $('#search')/*.button({
+            label: _('Search'),
+            icons: {
+                primary: ' ui-icon-refresh'
+            }
+        })*/.click(function () {
+            $('#search').addClass('disabled');
+            sendTo(null, 'browse', {port: parseInt($('#port').val(), 10), bind: $('#bind').val()}, function (list) {
+                $('#search').removeClass('disabled');
+                keys = table2values('values');
+                if (list && list.length) {
+                    var changed = false;
+                    for (var i = 0; i < list.length; list++) {
+                       var found = false;
+                       for (var k = 0; k < keys.length; k++) {
+                           if (keys[k].ip.trim() === list[i]) {
+                               found = true;
+                               break;
+                           }
+                       }
+                       if (!found) {
+                           keys.push({ip: list[i], key: ''});
+                           changed = true;
+                       }
+                    }
+                    if (keys.length > 1) {
+                        for (var kk = keys.length - 1; kk >= 0; kk--) {
+                            if (!keys[kk].ip && !keys[kk].key) {
+                                keys.splice(kk, 1);
+                                changed = true;
+                            }
+                        }
+                    }
+
+
+                    if (changed) {
+                        onChange();
+                        values2table('values', keys, {onChange: onChange});
+                    }
+                }
+            });
+        });
+
+        keys = settings.keys || [];
+
+        values2table('values', keys, {onChange: onChange});
+
+        getIsAdapterAlive(function (isAlive) {
+            if (isAlive || common.enabled) {
+                $('#search').removeClass('disabled');
+            } else {
+                $('#search').addClass('disabled');
+            }
+        });
+
+        onChange(false);
+    }
+
+    function save(callback) {
+        var obj = {};
+
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+
+        obj.interval = parseInt(obj.interval, 10) || 0;
+        if (obj.interval > 9000) obj.interval = 9000;
+
+        // Get edited table
+        obj.keys = table2values('values');
+
+        callback(obj);
+    }
+
+</script>
+</head>
+<body>
+    <div class="adapter-container m">
+        <div class="row">
+            <div id="tab-main" class="col s12 page">
+                <div class="row">
+                    <div class="col s12 m4 l2">
+                        <img src="Connector.png" class="logo">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m4 l3">
+                        <input class="value" id="user" type="text"/>
+                        <label class="translate" for="user">Username:</label>
+                    </div>
+                    <div class="col s12 m4 l3">
+                        <input class="value" id="pw" type="password"/>
+                        <label class="translate" for="pw">Password:</label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

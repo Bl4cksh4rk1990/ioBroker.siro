@@ -1,0 +1,63 @@
+{
+  "_from": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master",
+  "_id": "iobroker.connector@1.0.4",
+  "_inBundle": false,
+  "_integrity": "sha512-zl6aJlNzSHKxkTg+B5TtmmYNLt4/99n8seczSSwX74pJKoTWtM/ZRqTgqHuX09My8bK837ZxVGBudsjYiTHHlQ==",
+  "_location": "/iobroker.connector",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "remote",
+    "raw": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master",
+    "rawSpec": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master",
+    "saveSpec": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master",
+    "fetchSpec": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master",
+  "_shasum": "9f9f6bb249ad475e3e79332e99133ace7dca8aec",
+  "_spec": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/tarball/master",
+  "_where": "C:\\iobroker",
+  "author": {
+    "name": "Bl4cksh4rk",
+    "email": "bl4cksh4rk@live.de"
+  },
+  "bugs": {
+    "url": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "Bl4cksh4rk",
+      "email": "bl4cksh4rk@live.de"
+    }
+  ],
+  "dependencies": {
+    "@iobroker/adapter-core": "^1.0.3"
+  },
+  "deprecated": false,
+  "description": "Control Siro/Dooya Blinds",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "gulp": "^3.9.1",
+    "mocha": "^6.0.2"
+  },
+  "homepage": "https://github.com/Bl4cksh4rk1990/ioBroker.connector",
+  "keywords": [
+    "Connector",
+    "Siro"
+  ],
+  "license": "MIT",
+  "main": "main.js",
+  "name": "iobroker.connector",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bl4cksh4rk1990/ioBroker.connector.git"
+  },
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "version": "1.0.4"
+}
