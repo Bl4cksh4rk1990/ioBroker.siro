@@ -1,15 +1,16 @@
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
-const expect = require('chai').expect;
-const setup  = require(__dirname + '/lib/setup');
+var expect = require('chai').expect;
+var setup  = require(__dirname + '/lib/setup');
 
-let objects = null;
-let states  = null;
-let onStateChanged = null;
-let onObjectChanged = null;
-let sendToID = 1;
+var objects = null;
+var states  = null;
+var onStateChanged = null;
+var onObjectChanged = null;
+var sendToID = 1;
 
-const adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
+var adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.') + 1);
+var runningMode = require(__dirname + '/../io-package.json').common.mode;
 
 function checkConnectionOfAdapter(cb, counter) {
     counter = counter || 0;
@@ -78,12 +79,12 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         this.timeout(600000); // because of first install from npm
 
         setup.setupController(function () {
-            const config = setup.getAdapterConfig();
+            var config = setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
-            config.native.location = 'file://' + __dirname.replace(/\\/g, '/') + '/lib/forecast.json';
-            config.native.language = 'GE';
+
+            //config.native.dbtype   = 'sqlite';
 
             setup.setAdapterConfig(config.common, config.native);
 
@@ -98,55 +99,36 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         });
     });
 
-/*
-    ENABLE THIS WHEN ADAPTER RUNS IN DEAMON MODE TO CHECK THAT IT HAS STARTED SUCCESSFULLY
-*/
+    it('Test ' + adapterShortName + ' instance object: it must exists', function (done) {
+        objects.getObject('system.adapter.' + adapterShortName + '.0', function (err, obj) {
+            expect(err).to.be.null;
+            expect(obj).to.be.an('object');
+            expect(obj).not.to.be.null;
+            done();
+        });
+    });
+
     it('Test ' + adapterShortName + ' adapter: Check if adapter started', function (done) {
         this.timeout(60000);
         checkConnectionOfAdapter(function (res) {
             if (res) console.log(res);
-            expect(res).not.to.be.equal('Cannot check connection');
-            objects.setObject('system.adapter.test.0', {
-                    common: {
-
-                    },
-                    type: 'instance'
-                },
-                function () {
-                    states.subscribeMessage('system.adapter.test.0');
-                    done();
-                });
+            if (runningMode === 'daemon') {
+                expect(res).not.to.be.equal('Cannot check connection');
+            } else {
+                //??
+            }
+            done();
         });
     });
 /**/
 
-    it('Test ' + adapterShortName + ': check states', function (done) {
-        this.timeout(15000);
-
-        setTimeout(function () {
-            states.getState('weatherunderground.0.forecast.current.temp', function (err, state) {
-                expect(err).to.be.not.ok;
-                expect(state).to.be.ok;
-                expect(state.val).to.be.not.undefined;
-                expect(state.val).to.be.a('number');
-
-                states.getState('weatherunderground.0.forecast.current.windDegrees', function (err, state) {
-                    expect(err).to.be.not.ok;
-                    expect(state).to.be.ok;
-                    expect(state.val).to.be.not.undefined;
-                    expect(state.val).to.be.a('number');
-
-                    states.getState('weatherunderground.0.forecast.current.feelsLike', function (err, state) {
-                        expect(err).to.be.not.ok;
-                        expect(state).to.be.ok;
-                        expect(state.val).to.be.not.undefined;
-                        expect(state.val).to.be.a('number');
-                        done();
-                    });
-                });
-            });
-        }, 10000);
+/*
+    PUT YOUR OWN TESTS HERE USING
+    it('Testname', function ( done) {
+        ...
     });
+    You can also use "sendTo" method to send messages to the started adapter
+*/
 
     after('Test ' + adapterShortName + ' adapter: Stop js-controller', function (done) {
         this.timeout(10000);
