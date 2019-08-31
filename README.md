@@ -31,6 +31,9 @@ One Way No-Point Blinds:
 
 
 ## Changelog
+### 1.0.8 (2019-08-31)
+* renamed to iobroker.siro
+
 ### 1.0.7 (2019-08-18)
 * new Buttons added
 

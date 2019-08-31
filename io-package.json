@@ -1,13 +1,17 @@
 {
   "common": {
-    "name": "connector",
-    "title": "Bridge Connector",
+    "name": "siro",
+    "title": "Siro Bridge Connector",
     "desc": {
       "en": "Bridge Connector to control Siro Blinds",
       "de": "Bridge Connector zum steuern der Siro Rollomotoren"
     },
     "version": "1.0.7",
     "news": {
+     "1.0.8": {
+        "en": "renamed to iobroker.siro",
+        "de": "zu iobroker.siro umbenannt"
+      },
      "1.0.7": {
         "en": "new Buttons added",
         "de": "Neue Schaltflächen hinzugefügt"
@@ -39,9 +43,9 @@
       "Bl4cksh4rk <bl4cksh4rk@live.de>"
     ],
     "license": "MIT",
-    "readme": "https://github.com/Bl4cksh4rk1990/ioBroker.connector/blob/master/README.md",
+    "readme": "https://github.com/Bl4cksh4rk1990/ioBroker.siro/blob/master/README.md",
     "icon": "Connector.png",
-    "extIcon": "https://raw.githubusercontent.com/Bl4cksh4rk1990/ioBroker.connector/master/admin/Connector.png",
+    "extIcon": "https://raw.githubusercontent.com/Bl4cksh4rk1990/ioBroker.siro/master/admin/Connector.png",
     "type": "iot-systems",
     "enabled": true
   },
@@ -65,7 +69,7 @@
       "type": "state",
       "common": {
         "role": "indicator.connected",
-        "name": "If connected to Connector Service",
+        "name": "If connected to Siro Service",
         "type": "boolean",
         "read": true,
         "write": false,

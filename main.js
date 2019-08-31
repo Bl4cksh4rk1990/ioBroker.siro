@@ -1,5 +1,5 @@
 /**
- *      ioBroker Connector
+ *      ioBroker Siro
  *
  *      Copyright 2019, Bl4cksh4rk <bl4cksh4rk@live.de>
  *
@@ -7,12 +7,13 @@
  */
 'use strict';
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-//const adapter = utils.Adapter('connector');
 const request = require('request');
 const md5 = require('md5');
 const uuid = require('./lib/uuid');
 let adapter;
 const adapterName = require('./package.json').name.split('.').pop();
+
+const ApiURL = 'https://connectoreu.shadeconnector.com:8443';
 
 let objects = {};
 let delayed = {};
@@ -90,7 +91,7 @@ if (!id || !state || state.ack) {
 			}
 
 		request.post({
-			url: 'https://connectoreu.shadeconnector.com:8443/userCenter/deviceService/deviceControl',
+			url: ApiURL + '/userCenter/deviceService/deviceControl',
 			form: formData,
 			json: true
 		}, function (err, httpResponse, body) {
@@ -163,7 +164,7 @@ function setStates(id, val) {
 
 function ReadDevicesFromServer() {
 	request.post({
-		url: 'https://connectoreu.shadeconnector.com:8443/userCenter/areaService/getAreasWithDevices',
+		url: ApiURL + '/userCenter/areaService/getAreasWithDevices',
 		form: {
 			accessToken: AccessToken,
 			msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase()
@@ -345,7 +346,7 @@ function main() {
 	if (!adapter.config.user || !adapter.config.pw) return;
 
 	request.post({
-		url: 'https://connectoreu.shadeconnector.com:8443/userCenter/user/login',
+		url: ApiURL + '/userCenter/user/login',
 		form: {
 			loginName: adapter.config.user,
 			password: md5(adapter.config.pw).toUpperCase(),
