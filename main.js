@@ -24,6 +24,8 @@ let reconnectTimeout;
 let tasks = [];
 
 let AccessToken;
+let RefreshToken;
+let UserCode;
 let ReturnCode;
 
 function startAdapter(options) {
@@ -177,7 +179,7 @@ function ReadDevicesFromServer() {
 		ReturnCode = body.retCode;
 		if (ReturnCode === "20000") {
 			setConnected(true);
-			adapter.log.info('Read Devices...');
+			adapter.log.debug('Read Devices...');
 			for (var key in body.areas[0].childAreas[0].childAreas) {
 				var obj = body.areas[0].childAreas[0].childAreas[key];
 				adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_'), {
@@ -362,6 +364,8 @@ function main() {
 		if (ReturnCode === "20000") {
 			setConnected(true);
 			AccessToken = body.accessToken;
+			RefreshToken = body.refreshToken;
+			UserCode = body.userCode;
 			adapter.log.info('Logged in with Access Token: ' + AccessToken);
 		} else {
 			adapter.log.info('Login failed. Return Code: ' + ReturnCode);
@@ -375,3 +379,33 @@ if (module && module.parent) {
     // or start the instance directly
     startAdapter();
 }
+
+//schedule("*/10 * * * *", function () {
+schedule("0 */12 * * *", function () { //Tokenrefresh alle 12 Stunden
+   adapter.log.info('refresh Token');
+   ...
+   request.post({
+		url: ApiURL + '/userCenter/user/refreshToken',
+		form: {
+			accessToken: AccessToken,
+			refreshToken: refreshToken,
+			msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase()
+		},
+		json: true
+	}, function (err, httpResponse, body) {
+		if (err) {
+			return adapter.log.error('Login failed!');
+		}
+		ReturnCode = body.retCode;
+		if (ReturnCode === "20000") {
+			setConnected(true);
+			AccessToken = body.accessToken;
+			RefreshToken = body.refreshToken;
+			UserCode = body.userCode;
+			adapter.log.info('Token refreshed.');
+		} else {
+			adapter.log.error('Token refresh failed! Returncode: ' + ReturnCode);
+			stopConnector();
+		}
+	});
+});
