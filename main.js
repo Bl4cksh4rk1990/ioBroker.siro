@@ -71,6 +71,8 @@ if (!id || !state || state.ack) {
 				TempOperation = '0';
 			} else if (IDState === "STOP") {
 				TempOperation = '2';
+			} else if (IDState === "FAV") {
+				TempOperation = '12';
 			} else if (IDState === "targetPosition") {
 				TempTargetPosition = state.val;
 			}
@@ -263,6 +265,17 @@ function ReadDevicesFromServer() {
 							type: 'state',
 							common: {
 								name: 'DOWN',
+								role: 'button',
+								write: true,
+								read: false
+							},
+							native: {}
+						});
+					
+						adapter.setObjectNotExists(obj.areaName.replace(/ /g, '_') + '.' + device.deviceAlias.replace(/ /g, '_') + '.FAV', {
+							type: 'state',
+							common: {
+								name: 'FAV',
 								role: 'button',
 								write: true,
 								read: false
