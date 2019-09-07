@@ -1,6 +1,6 @@
 {
   "_from": "https://github.com/Bl4cksh4rk1990/ioBroker.siro/tarball/master",
-  "_id": "iobroker.siro@1.0.8",
+  "_id": "iobroker.siro@1.0.9",
   "_inBundle": false,
   "_integrity": "sha512-zl6aJlNzSHKxkTg+B5TtmmYNLt4/99n8seczSSwX74pJKoTWtM/ZRqTgqHuX09My8bK837ZxVGBudsjYiTHHlQ==",
   "_location": "/iobroker.siro",
@@ -36,7 +36,8 @@
   ],
   "dependencies": {
     "@iobroker/adapter-core": "^1.0.3",
-    "md5": "^2.2.1"
+    "md5": "^2.2.1",
+    "node-schedule": "^1.3.2"
   },
   "deprecated": false,
   "description": "Control Siro/Dooya Blinds",
@@ -60,5 +61,5 @@
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit"
   },
-  "version": "1.0.8"
+  "version": "1.0.9"
 }

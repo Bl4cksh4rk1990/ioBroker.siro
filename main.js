@@ -8,6 +8,7 @@
 'use strict';
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const request = require('request');
+var schedule = require('node-schedule');
 const md5 = require('md5');
 const uuid = require('./lib/uuid');
 let adapter;
@@ -23,10 +24,10 @@ let hub;
 let reconnectTimeout;
 let tasks = [];
 
-let AccessToken;
-let RefreshToken;
-let UserCode;
-let ReturnCode;
+var AccessToken;
+var RefreshToken;
+var UserCode;
+var ReturnCode;
 
 function startAdapter(options) {
     options = options || {};
@@ -367,28 +368,16 @@ function main() {
 			RefreshToken = body.refreshToken;
 			UserCode = body.userCode;
 			adapter.log.info('Logged in with Access Token: ' + AccessToken);
-		} else {
-			adapter.log.info('Login failed. Return Code: ' + ReturnCode);
-		}
-	});
-}
 
-if (module && module.parent) {
-    module.exports = startAdapter;
-} else {
-    // or start the instance directly
-    startAdapter();
-}
-
-//schedule("*/10 * * * *", function () {
-schedule("0 */12 * * *", function () { //Tokenrefresh alle 12 Stunden
+//var j = schedule.scheduleJob("*/1 * * * *", function(){
+var j = schedule.scheduleJob("0 */12 * * *", function(){ //Tokenrefresh alle 12 Stunden
    adapter.log.info('refresh Token');
-   ...
+
    request.post({
 		url: ApiURL + '/userCenter/user/refreshToken',
 		form: {
 			accessToken: AccessToken,
-			refreshToken: refreshToken,
+			refreshToken: RefreshToken,
 			msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase()
 		},
 		json: true
@@ -409,3 +398,16 @@ schedule("0 */12 * * *", function () { //Tokenrefresh alle 12 Stunden
 		}
 	});
 });
+
+		} else {
+			adapter.log.info('Login failed. Return Code: ' + ReturnCode);
+		}
+	});
+}
+
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
+}

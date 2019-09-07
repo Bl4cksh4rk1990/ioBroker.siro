@@ -6,8 +6,12 @@
       "en": "Bridge Connector to control Siro Blinds",
       "de": "Bridge Connector zum steuern der Siro Rollomotoren"
     },
-    "version": "1.0.7",
+    "version": "1.0.9",
     "news": {
+     "1.0.9": {
+        "en": "solved token problem. Update Token every 12 hours",
+        "de": "Problem mit Token behoben. Token wird jetzt alle 12 Stunden aktualisiert"
+      },
      "1.0.8": {
         "en": "renamed to iobroker.siro",
         "de": "zu iobroker.siro umbenannt"
