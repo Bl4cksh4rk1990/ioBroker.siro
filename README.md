@@ -31,6 +31,9 @@ One Way No-Point Blinds:
 
 
 ## Changelog
+### 1.0.9 (2019-09-07)
+* Solved Problem with Token. Refresh Token every 12 hours
+
 ### 1.0.8 (2019-08-31)
 * renamed to iobroker.siro
 
