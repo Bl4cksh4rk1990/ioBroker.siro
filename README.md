@@ -2,10 +2,10 @@
 ![Logo](admin/Connector.png)
 # ioBroker Connector Adapter
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.connector.svg)](https://www.npmjs.com/package/iobroker.connector)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.connector.svg)](https://www.npmjs.com/package/iobroker.connector)
+[![NPM version](http://img.shields.io/npm/v/iobroker.siro.svg)](https://www.npmjs.com/package/iobroker.siro)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.siro.svg)](https://www.npmjs.com/package/iobroker.siro)
 
-[![NPM](https://nodei.co/npm/iobroker.connector.png?downloads=true)](https://nodei.co/npm/iobroker.connector/)
+[![NPM](https://nodei.co/npm/iobroker.siro.png?downloads=true)](https://nodei.co/npm/iobroker.siro/)
 
 Control Siro Blinds with ioBroker
 
