@@ -112,6 +112,7 @@ if (!id || !state || state.ack) {
 				});
 			} else {
 				adapter.log.info('Control failed. Return Code: ' + ReturnCode);
+				setConnected(false);
 			}
 		});
 	});
@@ -407,7 +408,7 @@ var j = schedule.scheduleJob("0 */12 * * *", function(){ //Tokenrefresh alle 12 
 			adapter.log.info('Token refreshed.');
 		} else {
 			adapter.log.error('Token refresh failed! Returncode: ' + ReturnCode);
-			stopConnector();
+			setConnected(false);
 		}
 	});
 });
