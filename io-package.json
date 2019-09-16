@@ -6,9 +6,9 @@
       "en": "Bridge Connector to control Siro Blinds",
       "de": "Bridge Connector zum steuern der Siro Rollomotoren"
     },
-    "version": "1.0.9",
+    "version": "1.0.10",
     "news": {
-     "1.0.9": {
+     "1.0.10": {
         "en": "solved token problem. Update Token every 12 hours",
         "de": "Problem mit Token behoben. Token wird jetzt alle 12 Stunden aktualisiert"
       },
@@ -18,7 +18,7 @@
       },
      "1.0.7": {
         "en": "new Buttons added",
-        "de": "Neue Schaltflächen hinzugefügt"
+        "de": "Neue SchaltflÃ¤chen hinzugefÃ¼gt"
       },
 	"1.0.6": {
         "en": "fix start problem",
