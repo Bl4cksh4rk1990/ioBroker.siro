@@ -28,6 +28,7 @@ var AccessToken;
 var RefreshToken;
 var UserCode;
 var ReturnCode;
+var SheduleToken;
 
 function startAdapter(options) {
     options = options || {};
@@ -110,7 +111,11 @@ if (!id || !state || state.ack) {
 					val: state.val,
 					ack: true
 				});
-			} else {
+			} else if (ReturnCode === "20108") {
+			login();
+		} else if (ReturnCode === "20001") {
+			adapter.log.info("Server überlastet");
+		} else {
 				adapter.log.info('Control failed. Return Code: ' + ReturnCode);
 				setConnected(false);
 			}
@@ -139,6 +144,7 @@ function disconnected() {
 
 function stopConnector() {
 	clearInterval(ReadInterval);
+	clearSchedule(SheduleToken);
 	if (!reconnectTimeout) {
 		reconnectTimeout = setTimeout(main, adapter.config.restartInterval);
 	}
@@ -348,20 +354,50 @@ function ReadDevicesFromServer() {
 				}
 			}
 
-		} else {
+		} else if (ReturnCode === "20108") {
+			login();
+		} else if (ReturnCode === "20001") {
+			adapter.log.info("Server überlastet");
+		}
+		else {
 			setConnected(false);
 
 		}
 	});
 }
 
-function main() {
-	reconnectTimeout = null;
+function refreshToken() {
+   adapter.log.info('refresh Token');
 
-	adapter.subscribeStates('*');
+   request.post({
+		url: ApiURL + '/userCenter/user/refreshToken',
+		form: {
+			accessToken: AccessToken,
+			refreshToken: RefreshToken,
+			msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase()
+		},
+		json: true
+	}, function (err, httpResponse, body) {
+		if (err) {
+			return adapter.log.error('Login failed!');
+		}
+		ReturnCode = body.retCode;
+		if (ReturnCode === "20000") {
+			setConnected(true);
+			AccessToken = body.accessToken;
+			RefreshToken = body.refreshToken;
+			UserCode = body.userCode;
+			adapter.log.info('Token refreshed.');
+		} else if (ReturnCode === "20108") {
+			login();
+		} else {
+			adapter.log.error('Token refresh failed! Returncode: ' + ReturnCode);
+			setConnected(false);
+		}
+	});
+}
 
-	if (!adapter.config.user || !adapter.config.pw) return;
-
+function login() {
 	request.post({
 		url: ApiURL + '/userCenter/user/login',
 		form: {
@@ -384,39 +420,24 @@ function main() {
 			adapter.log.info('Logged in with Access Token: ' + AccessToken);
 
 //var j = schedule.scheduleJob("*/1 * * * *", function(){
-var j = schedule.scheduleJob("0 */12 * * *", function(){ //Tokenrefresh alle 12 Stunden
-   adapter.log.info('refresh Token');
-
-   request.post({
-		url: ApiURL + '/userCenter/user/refreshToken',
-		form: {
-			accessToken: AccessToken,
-			refreshToken: RefreshToken,
-			msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase()
-		},
-		json: true
-	}, function (err, httpResponse, body) {
-		if (err) {
-			return adapter.log.error('Login failed!');
-		}
-		ReturnCode = body.retCode;
-		if (ReturnCode === "20000") {
-			setConnected(true);
-			AccessToken = body.accessToken;
-			RefreshToken = body.refreshToken;
-			UserCode = body.userCode;
-			adapter.log.info('Token refreshed.');
-		} else {
-			adapter.log.error('Token refresh failed! Returncode: ' + ReturnCode);
-			setConnected(false);
-		}
-	});
+SheduleToken = schedule.scheduleJob("0 */12 * * *", function(){ //Tokenrefresh alle 12 Stunden
+	refreshToken();
 });
-
 		} else {
+			setConnected(false);
 			adapter.log.info('Login failed. Return Code: ' + ReturnCode);
 		}
 	});
+}
+
+function main() {
+	reconnectTimeout = null;
+
+	adapter.subscribeStates('*');
+
+	if (!adapter.config.user || !adapter.config.pw) return;
+
+	login();
 }
 
 if (module && module.parent) {
