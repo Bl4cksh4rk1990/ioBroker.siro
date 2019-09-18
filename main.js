@@ -144,7 +144,7 @@ function disconnected() {
 
 function stopConnector() {
 	clearInterval(ReadInterval);
-	clearSchedule(SheduleToken);
+	ScheduleToken.cancel();
 	if (!reconnectTimeout) {
 		reconnectTimeout = setTimeout(main, adapter.config.restartInterval);
 	}
