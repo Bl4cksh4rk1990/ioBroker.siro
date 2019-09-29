@@ -93,6 +93,7 @@ if (!id || !state || state.ack) {
 				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
 				mac: obj.native.mac,
 				deviceType: obj.native.deviceType,
+				operation: '5',
 				targetPosition: TempTargetPosition
 			};
 			}
