@@ -93,7 +93,18 @@ if (!id || !state || state.ack) {
 				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
 				mac: obj.native.mac,
 				deviceType: obj.native.deviceType,
-				operation: '0',
+				operation: '5'
+				};
+				request.post({
+					url: ApiURL + '/userCenter/deviceService/deviceControl',
+					form: formData,
+					json: true
+				}, function (err, httpResponse, body) {});
+				formData = {
+				accessToken: AccessToken,
+				msgId: uuid.generateUUID().replace(/-/g, '').toUpperCase(),
+				mac: obj.native.mac,
+				deviceType: obj.native.deviceType,
 				targetPosition: TempTargetPosition
 			};
 			}
