@@ -1,6 +1,6 @@
 {
   "_from": "https://github.com/Bl4cksh4rk1990/ioBroker.siro/tarball/master",
-  "_id": "iobroker.siro@1.0.11",
+  "_id": "iobroker.siro@1.0.12",
   "_inBundle": false,
   "_integrity": "sha512-zl6aJlNzSHKxkTg+B5TtmmYNLt4/99n8seczSSwX74pJKoTWtM/ZRqTgqHuX09My8bK837ZxVGBudsjYiTHHlQ==",
   "_location": "/iobroker.siro",
@@ -61,5 +61,5 @@
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit"
   },
-  "version": "1.0.11"
+  "version": "1.0.12"
 }

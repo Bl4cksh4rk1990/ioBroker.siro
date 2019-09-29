@@ -29,6 +29,7 @@ var RefreshToken;
 var UserCode;
 var ReturnCode;
 var SheduleToken;
+var ReadInterval;
 
 function startAdapter(options) {
     options = options || {};
@@ -126,11 +127,6 @@ if (!id || !state || state.ack) {
     return adapter;
 }
 
-var ReadInterval = setInterval(function () {
-	// alle 10 Sekunden ausführen 
-	ReadDevicesFromServer();
-}, 10000);
-
 function disconnected() {
 	connTimeout = null;
 	if (connected) {
@@ -143,8 +139,6 @@ function disconnected() {
 }
 
 function stopConnector() {
-	clearInterval(ReadInterval);
-	clearSchedule(SheduleToken);
 	if (!reconnectTimeout) {
 		reconnectTimeout = setTimeout(main, adapter.config.restartInterval);
 	}
@@ -184,6 +178,7 @@ function ReadDevicesFromServer() {
 		json: true
 	}, function (err, httpResponse, body) {
 		if (err) {
+			setConnected(false);
 			return adapter.log.error('Read Devices failed!');
 		}
 		ReturnCode = body.retCode;
@@ -355,6 +350,7 @@ function ReadDevicesFromServer() {
 			}
 
 		} else if (ReturnCode === "20108") {
+			adapter.log.error('Not Authorized. Login again after Returncode: ' + ReturnCode);
 			login();
 		} else if (ReturnCode === "20001") {
 			adapter.log.info("Server überlastet");
@@ -367,7 +363,12 @@ function ReadDevicesFromServer() {
 }
 
 function refreshToken() {
-   adapter.log.info('refresh Token');
+	if (connected !== true) {
+	adapter.log.info('Token failed. Not Logged in');
+	return;
+	}
+	
+   adapter.log.info('refresh Token...');
 
    request.post({
 		url: ApiURL + '/userCenter/user/refreshToken',
@@ -379,7 +380,8 @@ function refreshToken() {
 		json: true
 	}, function (err, httpResponse, body) {
 		if (err) {
-			return adapter.log.error('Login failed!');
+			setConnected(false);
+			return adapter.log.error('HTTP Request Error: Refresh Token failed!');
 		}
 		ReturnCode = body.retCode;
 		if (ReturnCode === "20000") {
@@ -389,6 +391,7 @@ function refreshToken() {
 			UserCode = body.userCode;
 			adapter.log.info('Token refreshed.');
 		} else if (ReturnCode === "20108") {
+			adapter.log.error('Not Authorized. Login again after Returncode: ' + ReturnCode);
 			login();
 		} else {
 			adapter.log.error('Token refresh failed! Returncode: ' + ReturnCode);
@@ -409,7 +412,8 @@ function login() {
 		json: true
 	}, function (err, httpResponse, body) {
 		if (err) {
-			return adapter.log.error('Login failed!');
+			setConnected(false);
+			return adapter.log.error('HTTP Request Error: Login failed!');
 		}
 		ReturnCode = body.retCode;
 		if (ReturnCode === "20000") {
@@ -417,12 +421,7 @@ function login() {
 			AccessToken = body.accessToken;
 			RefreshToken = body.refreshToken;
 			UserCode = body.userCode;
-			adapter.log.info('Logged in with Access Token: ' + AccessToken);
-
-//var j = schedule.scheduleJob("*/1 * * * *", function(){
-SheduleToken = schedule.scheduleJob("0 */12 * * *", function(){ //Tokenrefresh alle 12 Stunden
-	refreshToken();
-});
+			adapter.log.info('Logged in with Access Token: ' + AccessToken.substr(0, AccessToken.length-3)+'***');
 		} else {
 			setConnected(false);
 			adapter.log.info('Login failed. Return Code: ' + ReturnCode);
@@ -438,6 +437,21 @@ function main() {
 	if (!adapter.config.user || !adapter.config.pw) return;
 
 	login();
+	
+	//var j = schedule.scheduleJob("*/1 * * * *", function(){
+	if (!SheduleToken) {
+	SheduleToken = schedule.scheduleJob("0 */12 * * *", function(){ //Tokenrefresh alle 12 Stunden
+	refreshToken();
+	});
+	adapter.log.info('Token refresh Shedule added!');
+	}
+	
+	ReadInterval = setInterval(function () {
+	// alle 10 Sekunden ausführen 
+	if (connected) {
+	ReadDevicesFromServer();
+	}
+	}, 10000);
 }
 
 if (module && module.parent) {
