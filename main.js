@@ -51,8 +51,8 @@ function startAdapter(options) {
         }
     });
 	
-		adapter.on('stateChange', function (id, state) {
-if (!id || !state || state.ack) {
+	adapter.on('stateChange', function (id, state) {
+	if (!id || !state || state.ack) {
 		return;
 	}
 	const pos = id.lastIndexOf('.');
