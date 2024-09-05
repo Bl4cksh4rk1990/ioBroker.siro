@@ -196,7 +196,7 @@ function ReadDevicesFromServer() {
 		if (!('areas' in body)) {
 			return adapter.log.error('Read Devices failed!');
 		}
-		adapter.log.debug(JSON.stringify(body));
+
 		ReturnCode = body.retCode;
 		if (ReturnCode === "20000") {
 			setConnected(true);
