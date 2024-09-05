@@ -31,6 +31,9 @@ One Way No-Point Blinds:
 
 
 ## Changelog
+### 1.0.13 (2024-09-05)
+* issue in server response fixed
+
 ### 1.0.12 (2019-09-30)
 * many Bugfixes
 
