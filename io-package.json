@@ -1,7 +1,16 @@
 {
   "common": {
     "name": "siro",
-    "title": "Siro Bridge Connector",
+    "titleLang": {
+            "en": "Siro Bridge Connector",
+            "de": "Siro Bridge Connector",
+            "ru": "Siro Bridge Connector",
+            "pt": "Siro Bridge Connector",
+            "nl": "Siro Bridge Connector",
+            "fr": "Siro Bridge Connector",
+            "it": "Siro Bridge Connector",
+            "es": "Siro Bridge Connector"
+        },
     "desc": {
       "en": "Bridge Connector to control Siro Blinds",
       "de": "Bridge Connector zum steuern der Siro Rollomotoren"
@@ -58,7 +67,7 @@
     "authors": [
       "Bl4cksh4rk <bl4cksh4rk@live.de>"
     ],
-    "license": "MIT",
+    "licenseInformation": "MIT",
     "readme": "https://github.com/Bl4cksh4rk1990/ioBroker.siro/blob/master/README.md",
     "icon": "Connector.png",
     "extIcon": "https://raw.githubusercontent.com/Bl4cksh4rk1990/ioBroker.siro/master/admin/Connector.png",
