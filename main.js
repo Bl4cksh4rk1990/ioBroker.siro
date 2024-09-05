@@ -193,6 +193,10 @@ function ReadDevicesFromServer() {
 			setConnected(false);
 			return adapter.log.error('Read Devices failed!');
 		}
+		if (!('areas' in body)) {
+			return adapter.log.info('Read Devices failed!');
+		}
+
 		ReturnCode = body.retCode;
 		if (ReturnCode === "20000") {
 			setConnected(true);
@@ -203,7 +207,8 @@ function ReadDevicesFromServer() {
 					type: 'device',
 					common: {
 						name: obj.areaName,
-						role: 'room'
+						role: 'room',
+						type: 'object'
 					},
 					native: {}
 				});
@@ -216,7 +221,8 @@ function ReadDevicesFromServer() {
 						type: 'channel',
 						common: {
 							name: device.deviceAlias,
-							role: 'blind'
+							role: 'blind',
+							type: 'object'
 						},
 						native: {
 							mac: device.mac,
@@ -231,7 +237,8 @@ function ReadDevicesFromServer() {
 							name: 'RSSI',
 							role: 'value.rssi',
 							write: false,
-							read: true
+							read: true,
+							type: 'number'
 						},
 						native: {}
 					});
@@ -258,7 +265,8 @@ function ReadDevicesFromServer() {
 									 "13": "Endlage oben einstellen",
 									 "14": "Endlage unten einstellen"},
 							write: false,
-							read: true
+							read: true,
+							type: 'number'
 						},
 						native: {}
 					});
@@ -270,7 +278,8 @@ function ReadDevicesFromServer() {
 								name: 'UP',
 								role: 'button',
 								write: true,
-								read: false
+								read: false,
+								type: 'boolean'
 							},
 							native: {}
 						});
@@ -281,7 +290,8 @@ function ReadDevicesFromServer() {
 								name: 'DOWN',
 								role: 'button',
 								write: true,
-								read: false
+								read: false,
+								type: 'boolean'
 							},
 							native: {}
 						});
@@ -292,7 +302,8 @@ function ReadDevicesFromServer() {
 								name: 'FAV',
 								role: 'button',
 								write: true,
-								read: false
+								read: false,
+								type: 'boolean'
 							},
 							native: {}
 						});
@@ -303,7 +314,8 @@ function ReadDevicesFromServer() {
 								name: 'STOP',
 								role: 'button.stop',
 								write: true,
-								read: false
+								read: false,
+								type: 'boolean'
 							},
 							native: {}
 						});
@@ -315,7 +327,8 @@ function ReadDevicesFromServer() {
 								unit: '%',
 								role: 'value.battery',
 								write: false,
-								read: true
+								read: true,
+								type: 'number'
 							},
 							native: {}
 						});
@@ -327,7 +340,8 @@ function ReadDevicesFromServer() {
 								name: 'currentState',
 								role: 'state',
 								write: false,
-								read: true
+								read: true,
+								type: 'number'
 							},
 							native: {}
 						});
@@ -340,7 +354,8 @@ function ReadDevicesFromServer() {
 								unit: '%',
 								role: 'value.blind',
 								write: false,
-								read: true
+								read: true,
+								type: 'number'
 							},
 							native: {}
 						});
@@ -353,7 +368,8 @@ function ReadDevicesFromServer() {
 								unit: '%',
 								role: 'level.blind',
 								write: true,
-								read: true
+								read: true,
+								type: 'number'
 							},
 							native: {}
 						});
