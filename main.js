@@ -263,7 +263,7 @@ function ReadDevicesFromServer() {
 									 "14": "Endlage unten einstellen"},
 							write: false,
 							read: true,
-							type: 'array'
+							type: 'number'
 						},
 						native: {}
 					});
