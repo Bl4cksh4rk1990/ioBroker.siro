@@ -194,7 +194,7 @@ function ReadDevicesFromServer() {
 			return adapter.log.error('Read Devices failed!');
 		}
 		if (!('areas' in body)) {
-			return adapter.log.error('Read Devices failed!');
+			return adapter.log.info('Read Devices failed!');
 		}
 
 		ReturnCode = body.retCode;
